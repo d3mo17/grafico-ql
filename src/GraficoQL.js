@@ -9,8 +9,8 @@
 }(typeof self !== 'undefined' ? self : this, function (exports) {
   var defaults = {
     headers: {'Content-Type': 'application/json'}
-	};
-	
+  };
+  
   /**
    * @constructor
    * @param {string} url
@@ -24,8 +24,8 @@
       JSON.parse(JSON.stringify(defaults)),
       options || {}
     );
-	}
-	
+  }
+  
   /**
    * Overwrite header definition.
    * @param headers
@@ -35,8 +35,8 @@
     typeof headers === 'object' && !Array.isArray(headers)
       && (this.options.headers = headers || {});
     return this;
-	};
-	
+  };
+  
   /**
    * Set a header-key.
    * @param key
@@ -46,8 +46,8 @@
   GraphQLClient.prototype.setHeader = function (key, value) {
     this[' options']['headers'][key] = value;
     return this;
-	};
-	
+  };
+  
   /**
    * Extend target by source object.
    * @param {object} target
@@ -66,8 +66,8 @@
       }
     });
     return target;
-	}
-	
+  }
+  
   /**
    * @param {string} query
    * @param {object} variables
@@ -85,8 +85,8 @@
     deferred.promise = new Promise(function (resolve, reject) {
       deferred.resolve = resolve;
       deferred.reject = reject;
-		});
-		
+    });
+    
     resultHandling = handleRequestResult.bind(deferred, query, variables);
     fetch(this[' url'], extend(this[' options'], queryParams))
       .then(function (response) {
@@ -94,8 +94,8 @@
         getResultPromise(response).then(handling, handling);
       });
     return deferred.promise;
-	};
-	
+  };
+  
   /**
    * @this deferred-object
    * @param {string} query
@@ -104,21 +104,21 @@
    * @param {object} result
    */
   function handleRequestResult(query, variables, response, result) {
-		var errorResult;
-		
+    var errorResult;
+    
     if (response.ok && !result.errors && result.data) {
-			this.resolve(result.data);
-			return;
-		}
-		
+      this.resolve(result.data);
+      return;
+    }
+    
     errorResult = typeof result === 'string' ? {error: result} : result || {};
     errorResult['status'] = response.status;
     this.reject({
       response: errorResult,
       request: {query: query, variables: variables}
     });
-	}
-	
+  }
+  
   /**
    * @private
    * @param response
@@ -131,8 +131,8 @@
     } else {
       return response.text();
     }
-	}
-	
+  }
+  
   /**
    * @private
    */
@@ -145,8 +145,8 @@
     if (!Promise) {
       throw new ReferenceError(msg + 'Promise-constructor!' + advice);
     }
-	}
-	
+  }
+  
   extend(exports, {
     create: function (url, options) {
       return new GraphQLClient(url, options);

@@ -1,4 +1,4 @@
-# grafico
+# GraficoQL
 
  Minimal GraphQL client with UMD-support, written in plain javascript (ES5).
  Inspired by `graphql-request`.
@@ -25,7 +25,7 @@ Send a GraphQL query with a single line of code.
   var query = '{Movie(title: "Inception") {releaseDate, actors {name}}}';
 
   GraficoQL.request('https://api.graph.cool/simple/v1/movies', query)
-	  .then(function (data) { console.log(data); });
+    .then(function (data) { console.log(data); });
 </script>
 ```
 
@@ -52,7 +52,7 @@ client.request(query, variables).then(function (data) { console.log(data); });
 
   require(['grafico-ql/dist/grafico-ql.min'], function (GQL) {
     var endpoint = 'https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr';
-		var query = '{Movie(title: "Inception") {releaseDate, actors {name}}}';
+    var query = '{Movie(title: "Inception") {releaseDate, actors {name}}}';
 
     var graphQLClient = GQL.create(endpoint, {
       headers: {
@@ -60,14 +60,14 @@ client.request(query, variables).then(function (data) { console.log(data); });
       }
     });
 
-		graphQLClient.request(query)
-			.then(function (data) {
-				console.log(JSON.stringify(data, undefined, 2));
-			})
-			.catch(function (error) {
-				console.error(error);
-			});
-	});
+    graphQLClient.request(query)
+      .then(function (data) {
+        console.log(JSON.stringify(data, undefined, 2));
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  });
 </script>
 ```
 
@@ -83,27 +83,27 @@ client.request(query, variables).then(function (data) { console.log(data); });
     main(GQL).catch(error => console.error(error));
   });
 
-	async function main(GraphQLClient) {
-	  const endpoint = 'https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr'
-	  const query = /* GraphQL */ `
-	    {
-	      Movie(title: "Inception") {
-	        releaseDate
-	        actors {
-	          name
-	        }
-	      }
-	    }
-	  `
+  async function main(GraphQLClient) {
+    const endpoint = 'https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr'
+    const query = /* GraphQL */ `
+      {
+        Movie(title: "Inception") {
+          releaseDate
+          actors {
+            name
+          }
+        }
+      }
+    `
 
-	  const graphQLClient = GraphQLClient.create(endpoint, {
-	    credentials: 'include',
-	    mode: 'cors',
-	  })
+    const graphQLClient = GraphQLClient.create(endpoint, {
+      credentials: 'include',
+      mode: 'cors',
+    })
 
-	  const data = await graphQLClient.request(query)
-	  console.log(JSON.stringify(data, undefined, 2))
-	}
+    const data = await graphQLClient.request(query)
+    console.log(JSON.stringify(data, undefined, 2))
+  }
 </script>
 ```
 
@@ -116,22 +116,22 @@ client.request(query, variables).then(function (data) { console.log(data); });
   require.config({baseUrl: 'node_modules'});
 
   require(['grafico-ql/dist/grafico-ql.min'], function (GQL) {
-	  var endpoint = 'https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr';
-		var variables = {
-			title: 'Inception'
-		};
-	  var query = 'query getMovie($title: String!) {'
-			+ 'Movie(title: $title) {releaseDate, actors {name}}'
-			+ '}';
+    var endpoint = 'https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr';
+    var variables = {
+      title: 'Inception'
+    };
+    var query = 'query getMovie($title: String!) {'
+      + 'Movie(title: $title) {releaseDate, actors {name}}'
+      + '}';
 
-	  GQL.request(endpoint, query, variables)
-			.then(function (data) {
-				console.log(JSON.stringify(data, undefined, 2));
-			})
-			.catch(function (error) {
-				console.error(error);
-			});
-	});
+    GQL.request(endpoint, query, variables)
+      .then(function (data) {
+        console.log(JSON.stringify(data, undefined, 2));
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  });
 </script>
 ```
 
@@ -147,17 +147,17 @@ client.request(query, variables).then(function (data) { console.log(data); });
       Movie(title: "Inception") {\
         releaseDate\
         actors {\
-					# "Cannot query field \'fullname\' on type \'Actor\'.\
-					# Did you mean \'name\'?"\
-					fullname\
+          # "Cannot query field \'fullname\' on type \'Actor\'.\
+          # Did you mean \'name\'?"\
+          fullname\
         }\
       }\
     }\
   ';
 
-	GraficoQL.request(endpoint, query)
-		.then(function (data) { console.log(data); })
-		.catch(function (error) { console.error(error); });
+  GraficoQL.request(endpoint, query)
+    .then(function (data) { console.log(data); })
+    .catch(function (error) { console.error(error); });
 </script>
 ```
 
