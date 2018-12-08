@@ -12,7 +12,7 @@
 ## Install
 
 ```sh
-npm install grafico
+npm install grafico-ql
 ```
 
 ## Quickstart
