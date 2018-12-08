@@ -16,7 +16,7 @@
     "test": "test"
   },
   "main": "./src/GraficoQL.js",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "devDependencies": {
     "requirejs": "^2.3.6",
     "uglify-js": "^3.4.9"
