@@ -5,7 +5,7 @@
 
 ## Features
 
-- Universal Module Definition
+- AMD-, CommonJS and global-support (Universal Module Definition)
 - Promise-based API (works with `async` / `await`)
 - You have to provide polyfills for `fetch` and `Promise` to use it in IE9+
 
@@ -40,6 +40,9 @@ GraficoQL.request(endpoint, query, variables)
 var client = GraficoQL.create(endpoint, { headers: {} });
 client.request(query, variables).then(function (data) { console.log(data); });
 ```
+
+### API documentation
+[API of GraficoQL](api.md)
 
 ## Examples
 

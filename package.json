@@ -3,13 +3,17 @@
   "title": "grafico-ql",
   "description": "A minimalistic graphql client.",
   "keywords": [
-    "graphql client asynchron request"
+    "graphql",
+    "client",
+    "asynchron",
+    "request"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rekrut/grafico-ql.git"
   },
   "scripts": {
+    "document": "node_modules/jsdoc-to-markdown/bin/cli.js --no-cache --separators --private src/*.js > api.md",
     "build": "node scripts/build.js"
   },
   "directories": {
@@ -18,6 +22,7 @@
   "main": "./src/GraficoQL.js",
   "version": "1.0.2",
   "devDependencies": {
+    "jsdoc-to-markdown": "^3.0.4",
     "requirejs": "^2.3.6",
     "uglify-js": "^3.4.9"
   },

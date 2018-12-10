@@ -1,3 +1,11 @@
+/**
+ * Requirements: IE9+, fetch, Promise
+ *
+ * @param   {Object} root
+ * @param   {Function} factory
+ *
+ * @returns {Object}
+ */
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define('grafico-ql',['exports'], factory);
@@ -12,9 +20,17 @@
   };
   
   /**
+   * A minimalistic graphql client.
+   * @module GraficoQL
+   */
+  
+  /**
    * @constructor
-   * @param {string} url
-   * @param {object} options
+   * @global
+   * @private
+   * 
+   * @param {String} url The url of the graphql endpoint
+   * @param {Object} options
    */
   function GraphQLClient(url, options) {
     checkDependencies();
@@ -28,8 +44,9 @@
   
   /**
    * Overwrite header definition.
-   * @param headers
-   * @returns {GraphQLClient}
+   * @method GraphQLClient#setHeaders
+   * @param {Object} headers
+   * @returns {this}
    */
   GraphQLClient.prototype.setHeaders = function (headers) {
     typeof headers === 'object' && !Array.isArray(headers)
@@ -39,9 +56,10 @@
   
   /**
    * Set a header-key.
-   * @param key
-   * @param value
-   * @returns {GraphQLClient}
+   * @method GraphQLClient#setHeader
+   * @param {String} key
+   * @param {String} value
+   * @returns {this}
    */
   GraphQLClient.prototype.setHeader = function (key, value) {
     this[' options']['headers'][key] = value;
@@ -50,8 +68,9 @@
   
   /**
    * Extend target by source object.
-   * @param {object} target
-   * @param {object} source
+   * @param {Object} target
+   * @param {Object} source
+   * @return {Object} target
    */
   function extend(target, source) {
     Object.keys(source).forEach(function (key) {
@@ -69,8 +88,11 @@
   }
   
   /**
-   * @param {string} query
-   * @param {object} variables
+   * Requests the stored graphql endpoint.
+   * @method GraphQLClient#request
+   * @param {String} query
+   * @param {Object} variables
+   * @returns {Promise}
    */
   GraphQLClient.prototype.request = function (query, variables) {
     var resultHandling;
@@ -98,10 +120,10 @@
   
   /**
    * @this deferred-object
-   * @param {string} query
-   * @param {object} variables
-   * @param {object} response
-   * @param {object} result
+   * @param {String} query
+   * @param {Object} variables
+   * @param {Object} response
+   * @param {Object} result
    */
   function handleRequestResult(query, variables, response, result) {
     var errorResult;
@@ -122,7 +144,7 @@
   /**
    * @private
    * @param response
-   * @returns {*}
+   * @returns {Promise}
    */
   function getResultPromise(response) {
     var contentType = response.headers.get('Content-Type');
@@ -135,6 +157,7 @@
   
   /**
    * @private
+   * @throws {ReferenceError}
    */
   function checkDependencies() {
     var msg = 'Cannot initialize GraphQLClient, cause of missing ';
@@ -148,9 +171,28 @@
   }
   
   extend(exports, {
+    /**
+     * Creates an object to request a graphql endpoint.
+     * 
+     * @alias   module:GraficoQL.create
+     * @param   {String} url 
+     * @param   {Object} options 
+     * @returns {GraphQLClient}
+     * @throws  {ReferenceError}
+     */
     create: function (url, options) {
       return new GraphQLClient(url, options);
     },
+    /**
+     * Requests a graphql endpoint.
+     * 
+     * @alias   module:GraficoQL.request
+     * @param   {String} url 
+     * @param   {String} query 
+     * @param   {Object} variables 
+     * @returns {Promise}
+     * @throws  {ReferenceError}
+     */
     request: function (url, query, variables) {
       var client = exports.create(url);
       return client.request(query, variables);
