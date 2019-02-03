@@ -5,8 +5,10 @@
   "keywords": [
     "graphql",
     "client",
+    "fetch",
     "asynchron",
-    "request"
+    "request",
+    "graphql-request"
   ],
   "repository": {
     "type": "git",
@@ -20,7 +22,7 @@
     "test": "test"
   },
   "main": "./src/GraficoQL.js",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "devDependencies": {
     "jsdoc-to-markdown": "^3.0.4",
     "requirejs": "^2.3.6",

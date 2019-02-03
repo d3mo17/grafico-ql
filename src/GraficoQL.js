@@ -114,6 +114,11 @@
       .then(function (response) {
         var handling = resultHandling.bind(null, response);
         getResultPromise(response).then(handling, handling);
+      }, function (response) {
+        deferred.reject({
+            response: {status: 900, error: response},
+            request: {query: query, variables: variables}
+        });
       });
     return deferred.promise;
   };
