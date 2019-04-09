@@ -16,7 +16,8 @@
   }
 }(typeof self !== 'undefined' ? self : this, function (exports) {
   var defaults = {
-    headers: {'Content-Type': 'application/json'}
+    headers: {},
+    method: 'POST'
   };
   
   /**
@@ -41,18 +42,6 @@
       options || {}
     );
   }
-  
-  /**
-   * Overwrite header definition.
-   * @method GraphQLClient#setHeaders
-   * @param {Object} headers
-   * @returns {this}
-   */
-  GraphQLClient.prototype.setHeaders = function (headers) {
-    typeof headers === 'object' && !Array.isArray(headers)
-      && (this.options.headers = headers || {});
-    return this;
-  };
   
   /**
    * Set a header-key.
@@ -96,21 +85,44 @@
    */
   GraphQLClient.prototype.request = function (query, variables) {
     var resultHandling;
+    var url = [this[' url']];
     var deferred = {resolve: null, reject: null};
-    var queryParams = {
-      method: 'POST',
-      body: JSON.stringify({
-        query: query,
-        variables: variables ? variables : undefined
-      })
-    };
+    var queryParams = {method: this[' options']['method']};
+
+    switch (this[' options']['method'].toLowerCase()) {
+      case 'post':
+        this.setHeader('Content-Type', 'application/json');
+        queryParams.body = JSON.stringify({
+          query: query,
+          variables: variables ? variables : undefined
+        });
+        break;
+
+      case 'get':
+        this.setHeader('Content-Type', 'text/plain');
+        url.push(
+          (this[' url'].indexOf('?') === -1 ? '?' : '&')
+          + 'query=' + encodeURIComponent(query)
+        );
+        variables && url.push(
+          '&variables=' + encodeURIComponent(JSON.stringify(variables))
+        );
+        break;
+
+      default:
+        throw new Error(
+          'Invalid method (' + this[' options']['method'] + '). '
+          + 'Use method GET or POST!'
+        );
+    }
+
     deferred.promise = new Promise(function (resolve, reject) {
       deferred.resolve = resolve;
       deferred.reject = reject;
     });
     
     resultHandling = handleRequestResult.bind(deferred, query, variables);
-    fetch(this[' url'], extend(this[' options'], queryParams))
+    fetch(url.join(''), extend(this[' options'], queryParams))
       .then(function (response) {
         var handling = resultHandling.bind(null, response);
         getResultPromise(response).then(handling, handling);

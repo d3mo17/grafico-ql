@@ -73,7 +73,6 @@ Requests a graphql endpoint.
 
 * [GraphQLClient](#GraphQLClient) ℗
     * [new GraphQLClient(url, options)](#new_GraphQLClient_new)
-    * [.setHeaders(headers)](#GraphQLClient+setHeaders) ⇒ <code>this</code>
     * [.setHeader(key, value)](#GraphQLClient+setHeader) ⇒ <code>this</code>
     * [.request(query, variables)](#GraphQLClient+request) ⇒ <code>Promise</code>
 
@@ -88,20 +87,6 @@ Requests a graphql endpoint.
 | --- | --- | --- |
 | url | <code>String</code> | The url of the graphql endpoint |
 | options | <code>Object</code> |  |
-
-
-* * *
-
-<a name="GraphQLClient+setHeaders"></a>
-
-### graphQLClient.setHeaders(headers) ⇒ <code>this</code>
-Overwrite header definition.
-
-**Kind**: instance method of [<code>GraphQLClient</code>](#GraphQLClient)  
-
-| Param | Type |
-| --- | --- |
-| headers | <code>Object</code> | 
 
 
 * * *

@@ -1,7 +1,7 @@
 # GraficoQL
 
- Minimal GraphQL client with UMD-support, written in plain javascript (ES5).
- Inspired by `graphql-request`.
+Minimal GraphQL client with UMD-support, written in plain javascript (ES5).
+Inspired by `graphql-request`.
 
 ## Features
 
