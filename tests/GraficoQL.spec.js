@@ -9,13 +9,44 @@ function extend(target, source) {
     } else if (Array.isArray(target[key])) {
       Array.isArray(source[key])
         && (target[key] = target[key].concat(source[key]));
-    } else {
-      source[key] === 'object' && source[key] !== null
-        || (target[key] = extend(target[key], source[key]));
+    } else if (typeof source[key] === 'object'
+      && source[key] !== null
+      && !Array.isArray(source[key])
+    ) {
+      target[key] = extend(target[key], source[key]);
     }
   });
   return target;
 }
+
+describe('test extend-function', () => {
+  it('should extend an object by another', () => {
+    const target = { a: 1, b: 'test', c: [2, 3, 4], d: { e: 12, f: 'nested' } };
+    const source = { a: 3, c: [2, 1], d: { g: 'nested new' } };
+    extend(target, source);
+    expect(target).toEqual({
+      a: 3, b: 'test', c: [2, 3, 4, 2, 1], d: { e: 12, f: 'nested', g: 'nested new' }
+    });
+  });
+
+  it('should extend an object by another, respect different types', () => {
+    const target = { a: 1, b: 'test', c: [2, 3, 4], d: { e: 12, f: 'nested' } };
+    const source = { a: [1, 2], c: 'foo', d: 'bar' };
+    extend(target, source);
+    expect(target).toEqual({
+      a: [1, 2], b: 'test', c: [2, 3, 4], d: { e: 12, f: 'nested' }
+    });
+  });
+
+  it('should extend an object by another, respect different object-types', () => {
+    const target = { a: { g: 'foo', '1': 'bar' }, b: 'test', c: [2, 3, 4] };
+    const source = { a: [1, 2], c: { h: 'nested in source' } };
+    extend(target, source);
+    expect(target).toEqual({
+      a: { g: 'foo', '1': 'bar' }, b: 'test', c: [2, 3, 4]
+    });
+  });
+});
 
 function fakeGraphQL(response, option) {
   fakeFetch.respondWith(
@@ -24,7 +55,7 @@ function fakeGraphQL(response, option) {
   );
 }
 
-describe('GraficoQL.js',() => {
+describe('GraficoQL.js', () => {
   beforeEach(fakeFetch.install);
   afterEach(fakeFetch.restore);
 
