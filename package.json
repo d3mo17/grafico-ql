@@ -1,7 +1,7 @@
 {
   "name": "grafico-ql",
   "title": "grafico-ql",
-  "description": "A minimalistic graphql client.",
+  "description": "A minimal graphql client.",
   "keywords": [
     "graphql",
     "client",
@@ -16,13 +16,14 @@
   },
   "scripts": {
     "document": "node_modules/jsdoc-to-markdown/bin/cli.js --no-cache --separators --private src/*.js > api.md",
-    "build": "node scripts/build.js"
+    "build": "node scripts/build.js",
+    "test": "node_modules/jest/bin/jest.js"
   },
   "directories": {
     "test": "test"
   },
   "main": "./src/GraficoQL.js",
-  "version": "2.1.7",
+  "version": "2.1.8",
   "devDependencies": {
     "fake-fetch": "^2.1.0",
     "jest": "^24.7.1",

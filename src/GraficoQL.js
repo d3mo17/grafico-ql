@@ -68,9 +68,11 @@
       } else if (Array.isArray(target[key])) {
         Array.isArray(source[key])
           && (target[key] = target[key].concat(source[key]));
-      } else {
-        source[key] === 'object' && source[key] !== null
-          || (target[key] = extend(target[key], source[key]));
+      } else if (typeof source[key] === 'object'
+        && source[key] !== null
+        && !Array.isArray(source[key])
+      ) {
+        target[key] = extend(target[key], source[key]);
       }
     });
     return target;
@@ -87,7 +89,7 @@
     var resultHandling;
     var url = [this[' url']];
     var deferred = {resolve: null, reject: null};
-    var queryParams = {method: this[' options']['method']};
+    var queryParams = {};
 
     switch (this[' options']['method'].toLowerCase()) {
       case 'post':
