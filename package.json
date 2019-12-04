@@ -8,7 +8,8 @@
     "fetch",
     "asynchron",
     "request",
-    "graphql-request"
+    "graphql-request",
+    "graphql-client"
   ],
   "repository": {
     "type": "git",
@@ -23,13 +24,14 @@
     "test": "test"
   },
   "main": "./src/GraficoQL.js",
-  "version": "2.1.8",
+  "browser": "dist/grafico-ql.min.js",
+  "version": "2.1.9",
   "devDependencies": {
-    "fake-fetch": "^2.1.0",
-    "jest": "^24.7.1",
+    "fake-fetch": "^2.3.0",
+    "jest": "^24.9.0",
     "jsdoc-to-markdown": "^3.0.4",
     "requirejs": "^2.3.6",
-    "uglify-js": "^3.4.9",
+    "uglify-js": "^3.7.1",
     "whatwg-fetch": "^3.0.0"
   },
   "author": "Daniel Moritz",
@@ -37,5 +39,6 @@
   "bugs": {
     "url": "https://github.com/rekrut/grafico-ql/issues"
   },
-  "homepage": "https://github.com/rekrut/grafico-ql#readme"
+  "homepage": "https://github.com/rekrut/grafico-ql#readme",
+  "runkitExampleFilename": "runkit-example.js"
 }
