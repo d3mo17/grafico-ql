@@ -77,15 +77,15 @@
     });
     return target;
   }
-  
+
   /**
-   * Requests the stored graphql endpoint.
-   * @method GraphQLClient#request
+   * Shared function for requests.
+   * @param {Boolean} responseShouldBeRaw
    * @param {String} query
    * @param {Object} variables
    * @returns {Promise}
    */
-  GraphQLClient.prototype.request = function (query, variables) {
+  function privateRequest(responseShouldBeRaw, query, variables) {
     var resultHandling;
     var url = [this[' url']];
     var deferred = {resolve: null, reject: null};
@@ -123,7 +123,12 @@
       deferred.reject = reject;
     });
     
-    resultHandling = handleRequestResult.bind(deferred, query, variables);
+    resultHandling = handleRequestResult.bind(
+      deferred,
+      responseShouldBeRaw,
+      query,
+      variables
+    );
     fetch(url.join(''), extend(this[' options'], queryParams))
       .then(function (response) {
         var handling = resultHandling.bind(null, response);
@@ -135,25 +140,62 @@
         });
       });
     return deferred.promise;
+  }
+
+  /**
+   * Requests the stored graphql endpoint.
+   * @method GraphQLClient#request
+   * @param {String} query
+   * @param {Object} variables
+   * @returns {Promise}
+   */
+  GraphQLClient.prototype.request = function (query, variables) {
+    return privateRequest.call(this, false, query, variables);
+  };
+  
+  /**
+   * Requests the stored graphql endpoint.
+   * The complete response will be transmit to the resolved promise.
+   * @method GraphQLClient#request
+   * @param {String} query
+   * @param {Object} variables
+   * @returns {Promise}
+   */
+  GraphQLClient.prototype.rawRequest = function (query, variables) {
+    return privateRequest.call(this, true, query, variables);
   };
   
   /**
    * @this deferred-object
+   * @param {Boolean} responseShouldBeRaw 
    * @param {String} query
    * @param {Object} variables
    * @param {Object} response
    * @param {Object} result
    */
-  function handleRequestResult(query, variables, response, result) {
+  function handleRequestResult(
+    responseShouldBeRaw,
+    query,
+    variables,
+    response,
+    result
+  ) {
     var errorResult;
     
     if (response.ok && !result.errors && result.data) {
-      this.resolve(result.data);
+      if (!responseShouldBeRaw) {
+        this.resolve(result.data);
+      } else {
+        result['headers'] = response.headers;
+        result['status'] = response.status;
+        this.resolve(result);
+      }
       return;
     }
     
     errorResult = typeof result === 'string' ? {error: result} : result || {};
     errorResult['status'] = response.status;
+    responseShouldBeRaw && (errorResult['headers'] = response.headers);
     this.reject({
       response: errorResult,
       request: {query: query, variables: variables}
@@ -215,6 +257,21 @@
     request: function (url, query, variables) {
       var client = exports.create(url);
       return client.request(query, variables);
+    },
+    /**
+     * Requests a graphql endpoint.
+     * The complete response will be transmit to the resolved promise.
+     * 
+     * @alias   module:GraficoQL.rawRequest
+     * @param   {String} url 
+     * @param   {String} query 
+     * @param   {Object} variables 
+     * @returns {Promise}
+     * @throws  {ReferenceError}
+     */
+    rawRequest: function (url, query, variables) {
+      var client = exports.create(url);
+      return client.rawRequest(query, variables);
     }
   });
 }));

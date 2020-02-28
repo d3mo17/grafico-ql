@@ -83,6 +83,37 @@ describe('GraficoQL.js', () => {
   });
 
 
+  it('succeeds on query with raw response (default method "POST")', () => {
+    const data = {
+      data: {
+        viewer: {
+          id: 'some-id',
+        }
+      },
+      additional: 'Jack'
+    }
+    const query = `{ viewer { id } }`;
+    const variables = { foo: 'bar' };
+    expect.assertions(5);
+    fakeFetch.respondWith(
+      JSON.stringify(data),
+      { headers: new Headers({ 'Content-Type': 'application/json' }) }
+    );
+
+    return GraphQLClient.rawRequest(
+      'https://mock-api.com/graphql',
+      query,
+      variables
+    ).then((response) => {
+      expect(response.status).toEqual(200);
+      expect(response.data).toEqual(data.data);
+      expect(response.additional).toEqual('Jack');
+      expect('headers' in response).toBe(true);
+      expect(fakeFetch.getMethod()).toEqual('POST');
+    });
+  });
+
+
   it('succeeds on fetch with response header containing content-type with charset', () => {
     const data = {
       viewer: {
