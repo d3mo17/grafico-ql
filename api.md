@@ -22,6 +22,7 @@ A minimalistic graphql client.
 * [GraficoQL](#module_GraficoQL)
     * [.create(url, options)](#module_GraficoQL.create) ⇒ [<code>GraphQLClient</code>](#GraphQLClient)
     * [.request(url, query, variables)](#module_GraficoQL.request) ⇒ <code>Promise</code>
+    * [.rawRequest(url, query, variables)](#module_GraficoQL.rawRequest) ⇒ <code>Promise</code>
 
 
 * * *
@@ -65,6 +66,27 @@ Requests a graphql endpoint.
 
 * * *
 
+<a name="module_GraficoQL.rawRequest"></a>
+
+### GraficoQL.rawRequest(url, query, variables) ⇒ <code>Promise</code>
+Requests a graphql endpoint.
+The complete response will be transmit to the resolved promise.
+
+**Kind**: static method of [<code>GraficoQL</code>](#module_GraficoQL)  
+**Throws**:
+
+- <code>ReferenceError</code> 
+
+
+| Param | Type |
+| --- | --- |
+| url | <code>String</code> | 
+| query | <code>String</code> | 
+| variables | <code>Object</code> | 
+
+
+* * *
+
 <a name="GraphQLClient"></a>
 
 ## GraphQLClient ℗
@@ -75,6 +97,7 @@ Requests a graphql endpoint.
     * [new GraphQLClient(url, options)](#new_GraphQLClient_new)
     * [.setHeader(key, value)](#GraphQLClient+setHeader) ⇒ <code>this</code>
     * [.request(query, variables)](#GraphQLClient+request) ⇒ <code>Promise</code>
+    * [.rawRequest(query, variables)](#GraphQLClient+rawRequest) ⇒ <code>Promise</code>
 
 
 * * *
@@ -110,6 +133,22 @@ Set a header-key.
 
 ### graphQLClient.request(query, variables) ⇒ <code>Promise</code>
 Requests the stored graphql endpoint.
+
+**Kind**: instance method of [<code>GraphQLClient</code>](#GraphQLClient)  
+
+| Param | Type |
+| --- | --- |
+| query | <code>String</code> | 
+| variables | <code>Object</code> | 
+
+
+* * *
+
+<a name="GraphQLClient+rawRequest"></a>
+
+### graphQLClient.rawRequest(query, variables) ⇒ <code>Promise</code>
+Requests the stored graphql endpoint.
+The complete response will be transmit to the resolved promise.
 
 **Kind**: instance method of [<code>GraphQLClient</code>](#GraphQLClient)  
 

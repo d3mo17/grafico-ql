@@ -156,7 +156,7 @@
   /**
    * Requests the stored graphql endpoint.
    * The complete response will be transmit to the resolved promise.
-   * @method GraphQLClient#request
+   * @method GraphQLClient#rawRequest
    * @param {String} query
    * @param {Object} variables
    * @returns {Promise}
