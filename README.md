@@ -1,12 +1,15 @@
 # GraficoQL
 
 Minimal GraphQL client with UMD-support, written in plain javascript (ES5).
-Inspired by `graphql-request`.
+Inspired by `graphql-request` (with almost identical interface).
 
-## Features
+## Features and limitations
 
+- Very **simple and lightweight** GraphQL client
+- No dependencies
 - AMD-, CommonJS and global-support (Universal Module Definition)
 - Promise-based API (works with `async` / `await`)
+- Supports HTTP methods POST and GET
 - You have to provide polyfills for `fetch` and `Promise` to use it in IE9+
 
 ## Install
@@ -162,6 +165,41 @@ client.request(query, variables).then(function (data) { console.log(data); });
     .then(function (data) { console.log(data); })
     .catch(function (error) { console.error(error); });
 </script>
+```
+
+
+### Receiving a raw response
+
+The request method will return the data or errors key from the response.
+If you need to access the extensions key you can use the rawRequest method:
+
+```Javascript
+import { rawRequest } from 'grafico-ql'
+
+async function main() {
+  const endpoint = 'https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr'
+
+  const query = /* GraphQL */ `
+    {
+      Movie(title: "Inception") {
+        releaseDate
+        actors {
+          name
+        }
+      }
+    }
+  `
+
+  const { data, errors, extensions, headers, status } = await rawRequest(
+    endpoint,
+    query
+  )
+  console.log(
+    JSON.stringify({ data, errors, extensions, headers, status }, undefined, 2)
+  )
+}
+
+main().catch(error => console.error(error))
 ```
 
 

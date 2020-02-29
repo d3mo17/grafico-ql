@@ -21,7 +21,7 @@
   };
   
   /**
-   * A minimalistic graphql client.
+   * A minimal graphql client.
    * @module GraficoQL
    */
   

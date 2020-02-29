@@ -2,7 +2,7 @@
 
 <dl>
 <dt><a href="#module_GraficoQL">GraficoQL</a></dt>
-<dd><p>A minimalistic graphql client.</p>
+<dd><p>A minimal graphql client.</p>
 </dd>
 </dl>
 
@@ -16,7 +16,7 @@
 <a name="module_GraficoQL"></a>
 
 ## GraficoQL
-A minimalistic graphql client.
+A minimal graphql client.
 
 
 * [GraficoQL](#module_GraficoQL)
