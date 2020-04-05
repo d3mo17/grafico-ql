@@ -1,6 +1,7 @@
 {
   "name": "grafico-ql",
   "title": "grafico-ql",
+  "version": "2.2.4",
   "description": "A minimal graphql client.",
   "keywords": [
     "graphql",
@@ -25,7 +26,6 @@
   },
   "main": "./src/GraficoQL.js",
   "browser": "dist/grafico-ql.min.js",
-  "version": "2.2.3",
   "devDependencies": {
     "fake-fetch": "^2.3.0",
     "jest": "^24.9.0",
