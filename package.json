@@ -1,7 +1,7 @@
 {
   "name": "grafico-ql",
   "title": "grafico-ql",
-  "version": "2.2.4",
+  "version": "2.2.5",
   "description": "A minimal graphql client.",
   "keywords": [
     "graphql",
@@ -14,7 +14,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rekrut/grafico-ql.git"
+    "url": "git+https://github.com/d3mo17/grafico-ql.git"
   },
   "scripts": {
     "document": "node_modules/jsdoc-to-markdown/bin/cli.js --no-cache --separators --private src/*.js > api.md",
@@ -37,8 +37,8 @@
   "author": "Daniel Moritz",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rekrut/grafico-ql/issues"
+    "url": "https://github.com/d3mo17/grafico-ql/issues"
   },
-  "homepage": "https://github.com/rekrut/grafico-ql#readme",
+  "homepage": "https://github.com/d3mo17/grafico-ql#readme",
   "runkitExampleFilename": "runkit-example.js"
 }
