@@ -180,11 +180,16 @@
     response,
     result
   ) {
+    var responseData = {};
     var errorResult;
     
-    if (response.ok && !result.errors && result.data) {
+    if (response.ok && (result.data || result.errors)) {
       if (!responseShouldBeRaw) {
-        this.resolve(result.data);
+        result.errors && (responseData.errors = result.errors);
+        result.data !== undefined && (responseData.data = result.data);
+        Object.prototype.toString.call(result.extensions) === '[object Object]'
+          && (responseData.extensions = result.extensions);
+        this.resolve(responseData);
       } else {
         result['headers'] = response.headers;
         result['status'] = response.status;
@@ -212,7 +217,7 @@
     if (contentType && contentType.indexOf('application/json') === 0) {
       return response.json();
     } else {
-      return response.text();
+      return response.text().then(function (str) { return JSON.parse(str); });
     }
   }
   

@@ -3,14 +3,21 @@
 Minimal GraphQL client with UMD-support, written in plain javascript (ES5).
 Inspired by `graphql-request` (with almost identical interface).
 
+## Migration of version 2 to 3
+
+> See changes in Version 3 [here](migration-v2-v3.md)
+
 ## Features and limitations
 
-- Very **simple and lightweight** GraphQL client
+- Very **simple and lightweight** GraphQL client ([~ 1.2 kB gzipped](https://bundlephobia.com/result?p=grafico-ql))
 - No dependencies
 - AMD-, CommonJS and global-support (Universal Module Definition)
 - Promise-based API (works with `async` / `await`)
 - Supports HTTP methods POST and GET
 - You have to provide polyfills for `fetch` and `Promise` to use it in IE9+
+
+\
+&nbsp;
 
 ## Install
 
@@ -18,19 +25,26 @@ Inspired by `graphql-request` (with almost identical interface).
 npm install grafico-ql
 ```
 
+\
+&nbsp;
+
 ## Quickstart
 
-Send a GraphQL query with a single line of code.
+Send a GraphQL query with few lines of code.
 
 ```html
 <script src="node_modules/grafico-ql/dist/grafico-ql.min.js"></script>
 <script>
-  var query = '{Movie(title: "Inception") {releaseDate, actors {name}}}';
+  var query = '{country(code:"IT") {name}}';
 
-  GraficoQL.request('https://api.graph.cool/simple/v1/movies', query)
+  GraficoQL.request('https://countries.trevorblades.com', query)
     .then(function (data) { console.log(data); });
+  
 </script>
 ```
+
+\
+&nbsp;
 
 ## Usage
 
@@ -47,9 +61,28 @@ client.request(query, variables).then(function (data) { console.log(data); });
 ### API documentation
 [API of GraficoQL](api.md)
 
+\
+&nbsp;
+
+- - -
+  
 ## Examples
 
+### Use method GET instead of POST
+
+Additional options to the `fetch`-call, can only defined during instantiating a GraphQL-client. So, if you want to use the method GET instead of POST, you have to create a client:
+
+```js
+await GraficoQL.create(endpoint, {method: "GET"}).request(query);
+```
+
+\
+&nbsp;
+
+
 ### Authentication via HTTP header
+
+Again, for passing additional options to `fetch`, you have to create a client:
 
 ```html
 <script src="node_modules/requirejs/require.js"></script>
@@ -77,8 +110,10 @@ client.request(query, variables).then(function (data) { console.log(data); });
 </script>
 ```
 
+\
+&nbsp;
 
-### Passing more options to fetch
+### Passing more options to fetch ...
 
 ```html
 <script src="node_modules/requirejs/require.js"></script>
@@ -113,6 +148,8 @@ client.request(query, variables).then(function (data) { console.log(data); });
 </script>
 ```
 
+\
+&nbsp;
 
 ### Using variables
 
@@ -122,12 +159,12 @@ client.request(query, variables).then(function (data) { console.log(data); });
   require.config({baseUrl: 'node_modules'});
 
   require(['grafico-ql/dist/grafico-ql.min'], function (GQL) {
-    var endpoint = 'https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr';
+    var endpoint = 'https://countries.trevorblades.com';
     var variables = {
-      title: 'Inception'
+      cc: 'IT'
     };
-    var query = 'query getMovie($title: String!) {'
-      + 'Movie(title: $title) {releaseDate, actors {name}}'
+    var query = 'query getCountry($cc: ID!) {'
+      + 'country(code:$cc) {name}'
       + '}';
 
     GQL.request(endpoint, query, variables)
@@ -141,37 +178,45 @@ client.request(query, variables).then(function (data) { console.log(data); });
 </script>
 ```
 
+\
+&nbsp;
 
 ### Error handling
+
+For better debugging purposes, in case the status code of the response has not the value 200 (OK), the promise will be rejected and the resulting data will be in format: `{response: {...}, request: {...}}`.
 
 ```html
 <script src="node_modules/grafico-ql/dist/grafico-ql.min.js"></script>
 <script>
-  var endpoint = 'https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr'
+  var endpoint = 'https://countries.trevorblades.com'
   var query = /* GraphQL */ '\
     {\
-      Movie(title: "Inception") {\
-        releaseDate\
-        actors {\
-          # "Cannot query field \'fullname\' on type \'Actor\'.\
-          # Did you mean \'name\'?"\
-          fullname\
-        }\
+      country(code: "IT") {\
+        name\
+        notAvailableField\
       }\
     }\
   ';
 
   GraficoQL.request(endpoint, query)
-    .then(function (data) { console.log(data); })
-    .catch(function (error) { console.error(error); });
+    .then(function (data) {
+        console.log(data);
+        return data;
+    })
+    .catch(function (err) {
+        console.error(err);
+        return Promise.reject(err)
+    });
 </script>
 ```
 
+\
+&nbsp;
 
 ### Receiving a raw response
 
-The request method will return the data or errors key from the response.
-If you need to access the extensions key you can use the rawRequest method:
+The request method will return the data, errors and/or extensions key from the response.
+If you need to access any additional (non-standard) keys, you can use the rawRequest method:
 
 ```Javascript
 import { rawRequest } from 'grafico-ql'
@@ -202,6 +247,9 @@ async function main() {
 main().catch(error => console.error(error))
 ```
 
+\
+&nbsp;
+- - -
 
 ### Development
 
@@ -211,6 +259,8 @@ If you want to distribute your changes in the 'dist'-directory, you can use npm:
     $ npm run build
 ```
 
+\
+&nbsp;
 
 ## License
 

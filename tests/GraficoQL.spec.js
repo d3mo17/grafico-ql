@@ -50,7 +50,7 @@ describe('test extend-function', () => {
 
 function fakeGraphQL(response, option) {
   fakeFetch.respondWith(
-    JSON.stringify({ data: response }),
+    JSON.stringify(response),
     extend({ headers: new Headers({ 'Content-Type': 'application/json' }) }, option || {})
   );
 }
@@ -62,10 +62,12 @@ describe('GraficoQL.js', () => {
 
   it('succeeds on query (default method "POST")', () => {
     const data = {
-      viewer: {
-        id: 'some-id',
-      },
-    }
+        data: {
+          viewer: {
+            id: 'some-id',
+          }
+        }
+      }
     const query = `{ viewer { id } }`;
     const variables = { foo: 'bar' };
     expect.assertions(3);
@@ -85,20 +87,17 @@ describe('GraficoQL.js', () => {
 
   it('succeeds on query with raw response (default method "POST")', () => {
     const data = {
-      data: {
-        viewer: {
-          id: 'some-id',
-        }
-      },
-      additional: 'Jack'
-    }
+        data: {
+          viewer: {
+            id: 'some-id',
+          }
+        },
+        additional: 'Jack'
+      }
     const query = `{ viewer { id } }`;
     const variables = { foo: 'bar' };
     expect.assertions(5);
-    fakeFetch.respondWith(
-      JSON.stringify(data),
-      { headers: new Headers({ 'Content-Type': 'application/json' }) }
-    );
+    fakeGraphQL(data);
 
     return GraphQLClient.rawRequest(
       'https://mock-api.com/graphql',
@@ -114,16 +113,73 @@ describe('GraficoQL.js', () => {
   });
 
 
+  it('Strips additional keys', () => {
+    const data = {
+        data: {
+          viewer: {
+            id: 'some-id',
+          }
+        },
+        additional: 'Jack'
+      }
+    const query = `{ viewer { id } }`;
+    const variables = { foo: 'bar' };
+    expect.assertions(1);
+    fakeGraphQL(data);
+
+    return GraphQLClient.request(
+      'https://mock-api.com/graphql',
+      query,
+      variables
+    ).then((response) => {
+      expect(response).toEqual({data: data.data});
+    });
+  });
+
+
+  it('succeeds, but with errors', () => {
+    const data = {
+        data: {
+          viewer: {
+            id: 'some-id',
+          }
+        },
+        errors: [
+            { message: 'Bad moon arising!' }
+        ]
+      }
+    const query = `{ viewer { id } }`;
+    const variables = { foo: 'bar' };
+    expect.assertions(3);
+    fakeFetch.respondWith(
+      JSON.stringify(data),
+      { headers: new Headers({ 'Content-Type': 'application/json' }) }
+    );
+
+    return GraphQLClient.request(
+      'https://mock-api.com/graphql',
+      query,
+      variables
+    ).then((response) => {
+      expect(response.data).toEqual(data.data);
+      expect(response.error).toEqual(data.error);
+      expect(fakeFetch.getMethod()).toEqual('POST');
+    });
+  });
+
+
   it('succeeds on fetch with response header containing content-type with charset', () => {
     const data = {
-      viewer: {
-        id: 'some-id',
-      },
-    }
+        data: {
+          viewer: {
+            id: 'some-id',
+          }
+        }
+      }
     const query = `{ viewer { id } }`;
     expect.assertions(3);
     fakeFetch.respondWith(
-      JSON.stringify({ data }),
+      JSON.stringify(data),
       { headers: new Headers({ 'Content-Type': 'application/json; charset=utf-8' }) }
     );
 
@@ -140,10 +196,12 @@ describe('GraficoQL.js', () => {
 
   it('succeeds on query with method "GET"', () => {
     const data = {
-      viewer: {
-        id: 'some-id',
-      },
-    }
+        data: {
+          viewer: {
+            id: 'some-id',
+          }
+        }
+      }
     const query = `{ viewer { id } }`;
     const variables = { foo: 'bar' };
     expect.assertions(4);
@@ -165,10 +223,12 @@ describe('GraficoQL.js', () => {
 
   it('succeeds on query with method "GET" on url with parameters', () => {
     const data = {
-      viewer: {
-        id: 'some-id',
-      },
-    }
+        data: {
+          viewer: {
+            id: 'some-id',
+          }
+        }
+      }
     const query = `{ viewer { id } }`;
     const variables = { foo: 'bar' };
     expect.assertions(4);
@@ -188,6 +248,29 @@ describe('GraficoQL.js', () => {
   });
 
 
+  it('Server Response with incorrect content-type header', () => {
+    const data = {
+        data: {
+          viewer: {
+            id: 'some-id',
+          }
+        }
+      }
+    const query = `{ viewer { id } }`;
+    const variables = { foo: 'bar' };
+    expect.assertions(1);
+    fakeFetch.respondWith(
+      JSON.stringify(data)
+    );
+
+    return GraphQLClient.create('https://mock-api.com/graphql?a=b')
+      .request(query, variables)
+      .then((response) => {
+        expect(response).toEqual(data);
+      });
+  });
+
+
   it('fails on query, cause of internal server error', () => {
     expect.hasAssertions();
     fakeGraphQL('', { status: 500 });
@@ -200,7 +283,7 @@ describe('GraficoQL.js', () => {
       request: expect.any(Object),
       response: {
         status: 500,
-        data: ''
+        error: ''
       }
     }));
   });
@@ -218,7 +301,7 @@ describe('GraficoQL.js', () => {
       request: expect.any(Object),
       response: {
         status: 404,
-        data: ''
+        error: ''
       }
     }));
   });
@@ -232,10 +315,12 @@ describe('GraficoQL.js', () => {
     }
     const query = `{ viewer { id } }`;
     const data = {
-      viewer: {
-        id: 'some-id',
-      },
-    };
+        data: {
+          viewer: {
+            id: 'some-id',
+          }
+        }
+      };
     expect.assertions(4);
     fakeGraphQL(data);
 
