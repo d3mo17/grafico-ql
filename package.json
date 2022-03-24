@@ -1,7 +1,7 @@
 {
   "name": "grafico-ql",
   "title": "grafico-ql",
-  "version": "3.0.0",
+  "version": "3.0.2",
   "description": "A minimal graphql client.",
   "keywords": [
     "graphql",
@@ -39,6 +39,6 @@
   "bugs": {
     "url": "https://github.com/d3mo17/grafico-ql/issues"
   },
-  "homepage": "https://github.com/d3mo17/grafico-ql#readme",
+  "homepage": "https://github.com/d3mo17/grafico-ql",
   "runkitExampleFilename": "runkit-example.js"
 }
