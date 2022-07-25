@@ -1,4 +1,4 @@
-fetch = require('node-fetch');
+fetch = require('isomorphic-fetch');
 var GraficoQL = require("grafico-ql");
 
 var endpoint = 'https://countries.trevorblades.com';
