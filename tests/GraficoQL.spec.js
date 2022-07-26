@@ -1,5 +1,3 @@
-require('whatwg-fetch');
-const fakeFetch = require('fake-fetch');
 const GraphQLClient = require('../src/GraficoQL');
 
 function extend(target, source) {
@@ -49,16 +47,18 @@ describe('test extend-function', () => {
 });
 
 function fakeGraphQL(response, option) {
-  fakeFetch.respondWith(
-    JSON.stringify(response),
-    extend({ headers: new Headers({ 'Content-Type': 'application/json' }) }, option || {})
-  );
+  fetch.mockResponse(() => Promise.resolve(
+    extend({
+      body: JSON.stringify(response),
+      headers: new Headers({ 'Content-Type': 'application/json' })
+    }, option || {})
+  ));
 }
 
 describe('GraficoQL.js', () => {
-  beforeEach(fakeFetch.install);
-  afterEach(fakeFetch.restore);
-
+  beforeEach(() => {
+    fetch.resetMocks();
+  });
 
   it('succeeds on query (default method "POST")', () => {
     const data = {
@@ -70,17 +70,22 @@ describe('GraficoQL.js', () => {
       }
     const query = `{ viewer { id } }`;
     const variables = { foo: 'bar' };
-    expect.assertions(3);
+    expect.assertions(2);
     fakeGraphQL(data);
 
     return GraphQLClient.request(
       'https://mock-api.com/graphql',
       query,
       variables
-    ).then((response) => {
+    ).then(response => {
       expect(response).toEqual(data);
-      expect(fakeFetch.getMethod()).toEqual('POST');
-      expect(fakeFetch.getBody()).toEqual(JSON.stringify({ query, variables }));
+      expect(fetch).toBeCalledWith(
+        'https://mock-api.com/graphql',
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify({ query, variables })
+        })
+      );
     });
   });
 
@@ -100,7 +105,7 @@ describe('GraficoQL.js', () => {
     fakeGraphQL(data);
 
     return GraphQLClient.rawRequest(
-      'https://mock-api.com/graphql',
+      'https://mock-api.com/graphql2',
       query,
       variables
     ).then((response) => {
@@ -108,7 +113,10 @@ describe('GraficoQL.js', () => {
       expect(response.data).toEqual(data.data);
       expect(response.additional).toEqual('Jack');
       expect('headers' in response).toBe(true);
-      expect(fakeFetch.getMethod()).toEqual('POST');
+      expect(fetch).toBeCalledWith(
+        'https://mock-api.com/graphql2',
+        expect.objectContaining({method: 'POST'})
+      );
     });
   });
 
@@ -151,19 +159,19 @@ describe('GraficoQL.js', () => {
     const query = `{ viewer { id } }`;
     const variables = { foo: 'bar' };
     expect.assertions(3);
-    fakeFetch.respondWith(
-      JSON.stringify(data),
-      { headers: new Headers({ 'Content-Type': 'application/json' }) }
-    );
+    fakeGraphQL(data);
 
     return GraphQLClient.request(
-      'https://mock-api.com/graphql',
+      'https://mock-api123.com/graphql',
       query,
       variables
     ).then((response) => {
       expect(response.data).toEqual(data.data);
       expect(response.error).toEqual(data.error);
-      expect(fakeFetch.getMethod()).toEqual('POST');
+      expect(fetch).toBeCalledWith(
+        'https://mock-api123.com/graphql',
+        expect.objectContaining({method: 'POST'})
+      );
     });
   });
 
@@ -177,19 +185,26 @@ describe('GraficoQL.js', () => {
         }
       }
     const query = `{ viewer { id } }`;
-    expect.assertions(3);
-    fakeFetch.respondWith(
-      JSON.stringify(data),
-      { headers: new Headers({ 'Content-Type': 'application/json; charset=utf-8' }) }
-    );
+    expect.assertions(2);
+    fetch.mockResponse(() => Promise.resolve(
+      {
+        body: JSON.stringify(data),
+        headers: new Headers({ 'Content-Type': 'application/json; charset=utf-8' })
+      }
+    ));
 
     return GraphQLClient.request(
-      'https://mock-api.com/graphql',
+      'https://mock-api.de/graphql',
       query
     ).then((response) => {
       expect(response).toEqual(data);
-      expect(fakeFetch.getMethod()).toEqual('POST');
-      expect(fakeFetch.getBody()).toEqual(JSON.stringify({ query }));
+      expect(fetch).toBeCalledWith(
+        'https://mock-api.de/graphql',
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify({ query })
+        })
+      );
     });
   });
 
@@ -204,19 +219,22 @@ describe('GraficoQL.js', () => {
       }
     const query = `{ viewer { id } }`;
     const variables = { foo: 'bar' };
-    expect.assertions(4);
+    expect.assertions(2);
     fakeGraphQL(data);
 
     return GraphQLClient.create('https://mock-api.com/graphql', { method: 'get' })
       .request(query, variables)
       .then((response) => {
         expect(response).toEqual(data);
-        expect(fakeFetch.getMethod()).toEqual('get');
-        expect(fakeFetch.getBody()).toBe('');
-        expect(fakeFetch.getUrl()).toBe(
+        expect(fetch).toBeCalledWith(
           'https://mock-api.com/graphql'
           + '?query=%7B%20viewer%20%7B%20id%20%7D%20%7D'
-          + '&variables=%7B%22foo%22%3A%22bar%22%7D');
+          + '&variables=%7B%22foo%22%3A%22bar%22%7D',
+          expect.objectContaining({
+            method: 'get',
+            headers: {"Content-Type": "text/plain"}
+          })
+        );
       });
   });
 
@@ -231,19 +249,22 @@ describe('GraficoQL.js', () => {
       }
     const query = `{ viewer { id } }`;
     const variables = { foo: 'bar' };
-    expect.assertions(4);
+    expect.assertions(2);
     fakeGraphQL(data);
 
     return GraphQLClient.create('https://mock-api.com/graphql?a=b', { method: 'GET' })
       .request(query, variables)
       .then((response) => {
         expect(response).toEqual(data);
-        expect(fakeFetch.getMethod()).toEqual('GET');
-        expect(fakeFetch.getBody()).toBe('');
-        expect(fakeFetch.getUrl()).toBe(
+        expect(fetch).toBeCalledWith(
           'https://mock-api.com/graphql?a=b'
           + '&query=%7B%20viewer%20%7B%20id%20%7D%20%7D'
-          + '&variables=%7B%22foo%22%3A%22bar%22%7D');
+          + '&variables=%7B%22foo%22%3A%22bar%22%7D',
+          expect.objectContaining({
+            method: 'GET',
+            headers: {"Content-Type": "text/plain"}
+          })
+        );
       });
   });
 
@@ -259,9 +280,11 @@ describe('GraficoQL.js', () => {
     const query = `{ viewer { id } }`;
     const variables = { foo: 'bar' };
     expect.assertions(1);
-    fakeFetch.respondWith(
-      JSON.stringify(data)
-    );
+    fetch.mockResponse(() => Promise.resolve(
+      {
+        body: JSON.stringify(data)
+      }
+    ));
 
     return GraphQLClient.create('https://mock-api.com/graphql?a=b')
       .request(query, variables)
@@ -321,17 +344,21 @@ describe('GraficoQL.js', () => {
           }
         }
       };
-    expect.assertions(4);
+    expect.assertions(2);
     fakeGraphQL(data);
 
     return GraphQLClient
-      .create('https://mock-api.com/graphql', options)
+      .create('https://mock-api.it/graphql', options)
       .request(query)
       .then((response) => {
         expect(response).toEqual(data);
-        expect(fakeFetch.getMethod()).toEqual('POST');
-        expect(fakeFetch.getBody()).toEqual(JSON.stringify({ query }));
-        expect(fakeFetch.getOptions()).toMatchObject(options);
+        expect(fetch).toBeCalledWith(
+          'https://mock-api.it/graphql',
+          expect.objectContaining(extend({
+            method: 'POST',
+            body: JSON.stringify({ query })
+          }, options))
+        );
       });
   });
 });
