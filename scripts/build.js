@@ -33,3 +33,11 @@ rjs.optimize({
     console.log(buildResponse);
     resolve(buildResponse);
 });
+
+(function () {
+    var vars = JSON.parse(fs.readFileSync('package.json', 'utf-8')),
+        tpl = fs.readFileSync('README.md.mustache', 'utf-8'),
+        Mustache = require('mustache');
+
+    fs.writeFileSync('README.md', Mustache.render(tpl, vars));
+})();
