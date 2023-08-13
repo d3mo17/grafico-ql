@@ -8,13 +8,13 @@
  */
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define('grafico-ql',['exports'], factory);
-  } else if (typeof exports === 'object' && typeof exports.nodeName !== 'string') {
-    factory(exports);
+    define('grafico-ql',factory);
+  } else if (typeof module === 'object' && module.exports) {
+    module.exports = factory();
   } else {
-    factory(root.GraficoQL = {});
+    root.GraficoQL = factory();
   }
-}(typeof self !== 'undefined' ? self : this, function (exports) {
+}(this, function () {
   var defaults = {
     headers: {},
     method: 'POST'
@@ -37,7 +37,7 @@
     checkDependencies();
     this[' url'] = url;
     // clone defaults-object and extend it with option-object
-    this[' options'] = extend(
+    this[' options'] = Object.assign(
       JSON.parse(JSON.stringify(defaults)),
       options || {}
     );
@@ -54,29 +54,6 @@
     this[' options']['headers'][key] = value;
     return this;
   };
-  
-  /**
-   * Extend target by source object.
-   * @param {Object} target
-   * @param {Object} source
-   * @return {Object} target
-   */
-  function extend(target, source) {
-    Object.keys(source).forEach(function (key) {
-      if (typeof target[key] !== 'object' || target[key] === null) {
-        target[key] = source[key];
-      } else if (Array.isArray(target[key])) {
-        Array.isArray(source[key])
-          && (target[key] = target[key].concat(source[key]));
-      } else if (typeof source[key] === 'object'
-        && source[key] !== null
-        && !Array.isArray(source[key])
-      ) {
-        target[key] = extend(target[key], source[key]);
-      }
-    });
-    return target;
-  }
 
   /**
    * Shared function for requests.
@@ -89,12 +66,11 @@
     var resultHandling;
     var url = [this[' url']];
     var deferred = {resolve: null, reject: null};
-    var queryParams = {};
 
     switch (this[' options']['method'].toLowerCase()) {
       case 'post':
         this.setHeader('Content-Type', 'application/json');
-        queryParams.body = JSON.stringify({
+        this[' options'].body = JSON.stringify({
           query: query,
           variables: variables ? variables : undefined
         });
@@ -102,6 +78,7 @@
 
       case 'get':
         this.setHeader('Content-Type', 'text/plain');
+        delete this[' options'].body;
         url.push(
           (this[' url'].indexOf('?') === -1 ? '?' : '&')
           + 'query=' + encodeURIComponent(query)
@@ -129,7 +106,7 @@
       query,
       variables
     );
-    fetch(url.join(''), extend(this[' options'], queryParams))
+    fetch(url.join(''), this[' options'])
       .then(function (response) {
         var handling = resultHandling.bind(null, response);
         getResultPromise(response).then(handling, handling);
@@ -236,7 +213,7 @@
     }
   }
   
-  extend(exports, {
+  return {
     /**
      * Creates an object to request a graphql endpoint.
      * 
@@ -260,8 +237,7 @@
      * @throws  {ReferenceError}
      */
     request: function (url, query, variables) {
-      var client = exports.create(url);
-      return client.request(query, variables);
+      return (new GraphQLClient(url)).request(query, variables);
     },
     /**
      * Requests a graphql endpoint.
@@ -275,10 +251,9 @@
      * @throws  {ReferenceError}
      */
     rawRequest: function (url, query, variables) {
-      var client = exports.create(url);
-      return client.rawRequest(query, variables);
+      return (new GraphQLClient(url)).rawRequest(query, variables);
     }
-  });
+  };
 }));
 
 if (typeof define === 'function' && define.amd) {
