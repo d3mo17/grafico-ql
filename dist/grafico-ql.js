@@ -1,6 +1,4 @@
 /**
- * Requirements: IE9+, fetch, Promise
- *
  * @param   {Object} root
  * @param   {Function} factory
  *
@@ -19,22 +17,21 @@
     headers: {},
     method: 'POST'
   };
-  
+
   /**
    * A minimal graphql client.
    * @module GraficoQL
    */
-  
+
   /**
    * @constructor
    * @global
    * @private
-   * 
+   *
    * @param {String} url The url of the graphql endpoint
    * @param {Object} options
    */
   function GraphQLClient(url, options) {
-    checkDependencies();
     this[' url'] = url;
     // clone defaults-object and extend it with option-object
     this[' options'] = Object.assign(
@@ -42,7 +39,7 @@
       options || {}
     );
   }
-  
+
   /**
    * Set a header-key.
    * @method GraphQLClient#setHeader
@@ -99,7 +96,7 @@
       deferred.resolve = resolve;
       deferred.reject = reject;
     });
-    
+
     resultHandling = handleRequestResult.bind(
       deferred,
       responseShouldBeRaw,
@@ -129,7 +126,7 @@
   GraphQLClient.prototype.request = function (query, variables) {
     return privateRequest.call(this, false, query, variables);
   };
-  
+
   /**
    * Requests the stored graphql endpoint.
    * The complete response will be transmit to the resolved promise.
@@ -141,10 +138,10 @@
   GraphQLClient.prototype.rawRequest = function (query, variables) {
     return privateRequest.call(this, true, query, variables);
   };
-  
+
   /**
    * @this deferred-object
-   * @param {Boolean} responseShouldBeRaw 
+   * @param {Boolean} responseShouldBeRaw
    * @param {String} query
    * @param {Object} variables
    * @param {Object} response
@@ -159,7 +156,7 @@
   ) {
     var responseData = {};
     var errorResult;
-    
+
     if (response.ok && (result.data || result.errors)) {
       if (!responseShouldBeRaw) {
         result.errors && (responseData.errors = result.errors);
@@ -174,7 +171,7 @@
       }
       return;
     }
-    
+
     errorResult = typeof result === 'string' ? {error: result} : result || {};
     errorResult['status'] = response.status;
     responseShouldBeRaw && (errorResult['headers'] = response.headers);
@@ -183,7 +180,7 @@
       request: {query: query, variables: variables}
     });
   }
-  
+
   /**
    * @private
    * @param response
@@ -197,29 +194,14 @@
       return response.text().then(function (str) { return JSON.parse(str); });
     }
   }
-  
-  /**
-   * @private
-   * @throws {ReferenceError}
-   */
-  function checkDependencies() {
-    var msg = 'Cannot initialize GraphQLClient, cause of missing ';
-    var advice = ' You can resolve this by providing a polyfill for it.';
-    if (!fetch) {
-      throw new ReferenceError(msg + 'fetch-function!' + advice);
-    }
-    if (!Promise) {
-      throw new ReferenceError(msg + 'Promise-constructor!' + advice);
-    }
-  }
-  
+
   return {
     /**
      * Creates an object to request a graphql endpoint.
-     * 
+     *
      * @alias   module:GraficoQL.create
-     * @param   {String} url 
-     * @param   {Object} options 
+     * @param   {String} url
+     * @param   {Object} options
      * @returns {GraphQLClient}
      * @throws  {ReferenceError}
      */
@@ -228,11 +210,11 @@
     },
     /**
      * Requests a graphql endpoint.
-     * 
+     *
      * @alias   module:GraficoQL.request
-     * @param   {String} url 
-     * @param   {String} query 
-     * @param   {Object} variables 
+     * @param   {String} url
+     * @param   {String} query
+     * @param   {Object} variables
      * @returns {Promise}
      * @throws  {ReferenceError}
      */
@@ -242,11 +224,11 @@
     /**
      * Requests a graphql endpoint.
      * The complete response will be transmit to the resolved promise.
-     * 
+     *
      * @alias   module:GraficoQL.rawRequest
-     * @param   {String} url 
-     * @param   {String} query 
-     * @param   {Object} variables 
+     * @param   {String} url
+     * @param   {String} query
+     * @param   {Object} variables
      * @returns {Promise}
      * @throws  {ReferenceError}
      */

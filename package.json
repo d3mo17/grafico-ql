@@ -1,7 +1,7 @@
 {
   "name": "grafico-ql",
   "title": "grafico-ql",
-  "version": "3.0.7",
+  "version": "3.0.8",
   "description": "A minimal graphql client.",
   "keywords": [
     "graphql",
