@@ -9,7 +9,7 @@ Inspired by `graphql-request` (with almost identical interface).
 
 ## Features and limitations
 
-- Very **simple and lightweight** GraphQL client ([~ 1.2 kB gzipped](https://bundlephobia.com/package/grafico-ql@3.0.8))
+- Very **simple and lightweight** GraphQL client ([986 B gzipped](https://bundlephobia.com/package/grafico-ql@3.0.8))
 - No dependencies
 - AMD-, CommonJS and global-support (Universal Module Definition)
 - Promise-based API (works with `async` / `await`)
@@ -39,7 +39,7 @@ Send a GraphQL query with few lines of code.
 
   GraficoQL.request('https://countries.trevorblades.com', query)
     .then(function (data) { console.log(data); });
-  
+
 </script>
 ```
 
@@ -65,7 +65,7 @@ client.request(query, variables).then(function (data) { console.log(data); });
 &nbsp;
 
 - - -
-  
+
 ## Examples
 
 ### Use method GET instead of POST
